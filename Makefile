@@ -5,7 +5,7 @@ ENV_FILE = $(SRC_DIR)/.env
 
 DB_DATA_DIR = /home/yoka/data/db_data
 SSL_CERTS_DIR = /home/yoka/data/ssl_certs
-WORDPRESS_DATA_DIR = /home/yoka/data/wordpress_data
+WP_DATA_DIR = /home/yoka/data/wp_data
 
 
 # デフォルトターゲット
@@ -52,7 +52,7 @@ fclean: clean remove_volumes
 
 remove_volumes:
 	@echo "Removing volume directories..."
-	@sudo rm -rf $(DB_DATA_DIR) $(SSL_CERTS_DIR) $(WORDPRESS_DATA_DIR)
+	@sudo rm -rf $(DB_DATA_DIR) $(SSL_CERTS_DIR) $(WP_DATA_DIR)
 
 # 必要なボリュームディレクトリの作成
 create_volumes:
@@ -65,9 +65,9 @@ create_volumes:
 		echo "Creating volume directory: $(SSL_CERTS_DIR)"; \
 		mkdir -p $(SSL_CERTS_DIR); \
 	fi
-	@if [ ! -d "$(WORDPRESS_DATA_DIR)" ]; then \
-		echo "Creating volume directory: $(WORDPRESS_DATA_DIR)"; \
-		mkdir -p $(WORDPRESS_DATA_DIR); \
+	@if [ ! -d "$(WP_DATA_DIR)" ]; then \
+		echo "Creating volume directory: $(WP_DATA_DIR)"; \
+		mkdir -p $(WP_DATA_DIR); \
 	fi
 
 .PHONY: all build up docreate_volumeswn clean re logs healthcheck fclean create_volumes
