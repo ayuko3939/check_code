@@ -12,7 +12,7 @@ services:
       - .env
     restart: always
     networks:
-      - my_network
+      - inception_net
     healthcheck:
       test:
         [
@@ -35,7 +35,7 @@ services:
     env_file:
       - .env
     networks:
-      - my_network
+      - inception_net
     volumes:
       - wordpress_data:/var/www/html
 
@@ -54,7 +54,7 @@ services:
       - wordpress_data:/var/www/html
       - ssl_certs:/etc/nginx/ssl
     networks:
-      - my_network
+      - inception_net
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost']
       timeout: 30s
@@ -85,5 +85,5 @@ volumes:
       type: none
 
 networks:
-  my_network:
+  inception_net:
     driver: bridge
