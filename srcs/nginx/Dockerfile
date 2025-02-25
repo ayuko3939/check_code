@@ -1,8 +1,7 @@
 FROM debian:bullseye
 
-RUN apt update
-RUN apt install -y nginx openssl nginx curl
+RUN apt update && apt install -y nginx openssl
 
-COPY init.sh /docker-entrypoint-initdb.d/init.sh
+COPY init.sh /docker-entrypoint.d/init.sh
 
-ENTRYPOINT ["/docker-entrypoint-initdb.d/init.sh"]
+ENTRYPOINT ["/docker-entrypoint.d/init.sh"]
