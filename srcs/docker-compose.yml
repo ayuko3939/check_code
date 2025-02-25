@@ -13,20 +13,20 @@ services:
     restart: always
     networks:
       - inception_net
-    healthcheck:
-      test:
-        [
-          'CMD-SHELL',
-          'mysql -u root -p$MYSQL_ROOT_PASSWORD -e ''SELECT User FROM mysql.user WHERE User="$MYSQL_USER";''',
-        ]
-      timeout: 30s
-      retries: 20
-      interval: 1s
+    # healthcheck:
+    #   test:
+    #     [
+    #       'CMD-SHELL',
+    #       'mysql -u root -p$MYSQL_ROOT_PASSWORD -e ''SELECT User FROM mysql.user WHERE User="$MYSQL_USER";''',
+    #     ]
+    #   timeout: 30s
+    #   retries: 20
+    #   interval: 1s
   wordpress:
     depends_on:
-      mariadb:
-        condition: service_healthy
-
+      - mariadb
+      # mariadb:
+      #   condition: service_healthy
     container_name: wordpress
     build:
       context: ./wordpress
@@ -55,11 +55,11 @@ services:
       - ssl_certs:/etc/nginx/ssl
     networks:
       - inception_net
-    healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost']
-      timeout: 30s
-      retries: 20
-      interval: 1s
+    # healthcheck:
+    #   test: ['CMD', 'curl', '-f', 'http://localhost']
+    #   timeout: 30s
+    #   retries: 20
+    #   interval: 1s
 
 volumes:
   db_data:
