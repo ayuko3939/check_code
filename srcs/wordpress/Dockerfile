@@ -31,7 +31,7 @@ RUN service php7.4-fpm start && service php7.4-fpm stop
 COPY www.conf /etc/php/7.4/fpm/pool.d/www.conf
 
 # カスタムエントリーポイントスクリプトをコピー
-COPY docker-entrypoint.sh /docker-entrypoint-initdb.d/docker-entrypoint.sh
+COPY init.sh /docker-entrypoint-initdb.d/init.sh
 
 # エントリーポイントスクリプトを実行（コンテナ起動時に実行される）
-ENTRYPOINT ["/docker-entrypoint-initdb.d/docker-entrypoint.sh"]
+ENTRYPOINT ["/docker-entrypoint-initdb.d/init.sh"]
