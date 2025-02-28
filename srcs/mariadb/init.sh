@@ -8,4 +8,4 @@ GRANT ALL PRIVILEGES ON ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'%';
 FLUSH PRIVILEGES;
 EOF
 
-mariadbd --init-file=/docker-entrypoint-initdb.d/init.sql
+exec mariadbd --init-file=/docker-entrypoint-initdb.d/init.sql
