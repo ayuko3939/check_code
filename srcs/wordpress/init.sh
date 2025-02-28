@@ -12,17 +12,17 @@ if [ ! -f /var/www/html/wp-config.php ]; then
   wp core download --path=/var/www/html --locale=ja --allow-root
 
   wp config create \
-    --dbname="$MYSQL_DATABASE" \
-    --dbuser="$MYSQL_USER" \
-    --dbpass="$MYSQL_PASSWORD" \
-    --dbhost="$WORDPRESS_DB_HOST" \
+    --dbname="${MYSQL_DATABASE}" \
+    --dbuser="${MYSQL_USER}" \
+    --dbpass="${MYSQL_PASSWORD}" \
+    --dbhost="${WORDPRESS_DB_HOST}" \
     --dbcharset="utf8mb4" \
     --dbcollate="utf8mb4_unicode_ci" \
     --path="/var/www/html" \
     --allow-root
 
   wp core install \
-    --url="https://yohasega.42.fr" \
+    --url="${DOMAIN}" \
     --title="${WORDPRESS_SITE_TITLE}" \
     --admin_user="${WORDPRESS_ADMIN_USER}" \
     --admin_password="${WORDPRESS_ADMIN_PASSWORD}" \
