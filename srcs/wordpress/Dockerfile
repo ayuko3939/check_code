@@ -1,42 +1,46 @@
-# ベースイメージとして Debian Bullseye を使用
+# 1. ベースイメージの指定：Debian Bullseye を使用
 FROM debian:bullseye
 
-# パッケージリストを更新
-RUN apt-get update -y
+# 2. パッケージリストの更新と3. 必要なパッケージのインストール
+# 必須のパッケージのみをインストール（PHP本体、PHP-FPM、PHP-CLI、MySQL連携用、MariaDBクライアント、curl）
+RUN apt-get update -y && \
+    apt-get install -y \
+      php7.4 \
+      php7.4-fpm \
+      php7.4-cli \
+      php7.4-mysql \
+      mariadb-client \
+      curl
 
-# 必要なパッケージをインストール pho-fpm7.4
-RUN apt install -y php7.4 \
-                   php7.4-fpm \
-                   php7.4-cli \
-                   php7.4-common \
-                   php7.4-mysql \
-                   php7.4-gd \
-                   php7.4-mbstring \
-                   php7.4-curl \
-                   php7.4-xml
-
-RUN apt install -y mariadb-client curl
-
-# WP-CLI（WordPress コマンドラインツール）をダウンロード
-RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-
-# WordPress 用のディレクトリを作成
+# 4. WordPress 用ディレクトリの作成
 RUN mkdir -p /var/www/html
 
-# ダウンロードしたファイルを実行可能にし、システム全体で使えるように配置
-RUN chmod +x wp-cli.phar && mv wp-cli.phar /usr/local/bin/wp
+# 5. WP-CLI の導入
+# /usr/local/bin/wp に直接ダウンロードし、実行可能にする
+RUN curl -o /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+RUN chmod +x /usr/local/bin/wp
 
-# /var/www/html の所有者を www-data ユーザーに変更
+# 6. ディレクトリの所有権・権限の設定 ( /var/www/html の所有者を www-data に変更)
 RUN chown -R www-data:www-data /var/www/html
 
-# 必要ファイルを生成する為PHP-FPM サービスを一度起動して停止
+# # 7. PHP-FPM 用のログディレクトリ作成と権限設定
+# RUN mkdir -p /var/log/php-fpm/ && \
+#     chown -R www-data:www-data /var/log/php-fpm/
+
+# 8. PHP-FPM の初期化
+# PHP-FPM を一度起動して停止させることで、必要な初期ファイル（例：ソケットなど）を生成する
 RUN service php7.4-fpm start && service php7.4-fpm stop
 
-# カスタム PHP-FPM 設定ファイルをコピー
+# 9. カスタム PHP-FPM 設定ファイル（www.conf）のコピー
 COPY www.conf /etc/php/7.4/fpm/pool.d/www.conf
 
-# カスタムエントリーポイントスクリプトをコピー
+# 10. カスタムエントリーポイントスクリプトのコピー
+# コンテナ起動時に WordPress の初期設定を行うためのスクリプトをコピーする
 COPY init.sh /docker-entrypoint.d/init.sh
 
-# エントリーポイントスクリプトを実行（コンテナ起動時に実行される）
+# エントリーポイントスクリプトに実行権限を付与
+# RUN chmod +x /docker-entrypoint.d/init.sh
+
+# 11. コンテナ起動時のエントリーポイント設定
+# コンテナ起動時に init.sh が実行され、最終的に PHP-FPM をフォアグラウンドで起動する
 ENTRYPOINT ["/docker-entrypoint.d/init.sh"]
