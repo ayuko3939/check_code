@@ -3,9 +3,9 @@ SRC_DIR = srcs
 DOCKER_COMPOSE = docker compose -f $(SRC_DIR)/docker-compose.yml
 ENV_FILE = $(SRC_DIR)/.env
 
-DB_DATA_DIR = /home/yoka/data/db_data
-SSL_CERTS_DIR = /home/yoka/data/ssl_certs
-WP_DATA_DIR = /home/yoka/data/wp_data
+DB_DATA_DIR = $(HOME)/data/db_data
+SSL_CERTS_DIR = $(HOME)/data/ssl_certs
+WP_DATA_DIR = $(HOME)/data/wp_data
 
 
 # デフォルトターゲット
