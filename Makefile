@@ -1,73 +1,26 @@
-NAME = inception
-SRC_DIR = srcs
-DOCKER_COMPOSE = docker compose -f $(SRC_DIR)/docker-compose.yml
-ENV_FILE = $(SRC_DIR)/.env
+.PHONY: all prepare build up down stop clean fclean re
 
-DB_DATA_DIR = $(HOME)/data/db_data
-SSL_CERTS_DIR = $(HOME)/data/ssl_certs
-WP_DATA_DIR = $(HOME)/data/wp_data
+all: up
 
+prepare:
+	mkdir -p $(HOME)/data/db_data $(HOME)/data/wp_data $(HOME)/data/ssl_certs
 
-# デフォルトターゲット
-all: create_volumes up
+build:
+	cd srcs && docker compose build
 
-# Docker コンテナをビルドして起動
-build: create_volumes
-	@echo "Building Docker containers..."
-	$(DOCKER_COMPOSE) build
+up: prepare build
+	cd srcs && docker compose up -d
 
-# Docker コンテナをバックグラウンドで起動
-up: build
-	@echo "Starting Docker containers..."
-	$(DOCKER_COMPOSE) up -d
-
-# Docker コンテナを停止
 down:
-	@echo "Stopping Docker containers..."
-	$(DOCKER_COMPOSE) down
+	cd srcs && docker compose down
 
-# Docker コンテナを停止して、ボリュームとネットワークも削除
-clean: remove_volumes
-	@echo "Cleaning up Docker containers, networks, and volumes..."
-	$(DOCKER_COMPOSE) down -v --rmi all
+stop:
+	cd srcs && docker compose stop
 
-# 完全に再構築
-re: clean all
+clean:
+	cd srcs && docker compose down -v --rmi all --remove-orphans
 
-# ログの表示
-logs:
-	@echo "Showing logs..."
-	$(DOCKER_COMPOSE) logs -f
+fclean: clean
+	sudo rm -rf $(HOME)/data/
 
-# ヘルスチェック
-healthcheck:
-	@echo "Checking container health..."
-	$(DOCKER_COMPOSE) ps
-
-# クリーンアップして Docker システムを最適化
-fclean: clean remove_volumes
-	@echo "Performing full cleanup..."
-	docker system prune -af
-
-
-remove_volumes:
-	@echo "Removing volume directories..."
-	@sudo rm -rf $(DB_DATA_DIR) $(SSL_CERTS_DIR) $(WP_DATA_DIR)
-
-# 必要なボリュームディレクトリの作成
-create_volumes:
-	@echo "Checking if volume directories exist..."
-	@if [ ! -d "$(DB_DATA_DIR)" ]; then \
-		echo "Creating volume directory: $(DB_DATA_DIR)"; \
-		mkdir -p $(DB_DATA_DIR); \
-	fi
-	@if [ ! -d "$(SSL_CERTS_DIR)" ]; then \
-		echo "Creating volume directory: $(SSL_CERTS_DIR)"; \
-		mkdir -p $(SSL_CERTS_DIR); \
-	fi
-	@if [ ! -d "$(WP_DATA_DIR)" ]; then \
-		echo "Creating volume directory: $(WP_DATA_DIR)"; \
-		mkdir -p $(WP_DATA_DIR); \
-	fi
-
-.PHONY: all build up docreate_volumeswn clean re logs healthcheck fclean create_volumes
+re: fclean up
