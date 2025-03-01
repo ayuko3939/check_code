@@ -18,8 +18,8 @@ RUN chown -R www-data:www-data /var/www/html
 
 RUN service php7.4-fpm start && service php7.4-fpm stop
 
-COPY www.conf /etc/php/7.4/fpm/pool.d/www.conf
+COPY ./conf/www.conf /etc/php/7.4/fpm/pool.d/www.conf
 
-COPY init.sh /docker-entrypoint.d/init.sh
+COPY ./tools/init.sh /docker-entrypoint.d/init.sh
 
 ENTRYPOINT ["/docker-entrypoint.d/init.sh"]
